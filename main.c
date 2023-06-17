@@ -38,11 +38,6 @@ Productos *agregarProducto(Map *tiendas)
     }
     printf("Ingrese el nombre del producto: ");
     scanf("%s", nombre);
-    if(searchMap(tiendas, nombre) != NULL)
-    {
-        printf("El producto ya existe\n");
-        return NULL;
-    }
     strcpy(producto->nombre, nombre);
 
     printf("Ingrese el precio del producto: ");
@@ -62,7 +57,8 @@ Productos *agregarProducto(Map *tiendas)
 
 int main()
 {
-    Map *tiendas = createMap(is_equal_string);
+    Map *mapaTiendas = createMap(is_equal_string);
+    char *nombreTienda = (char *)malloc(sizeof(char)*50);
     Productos *nuevoProducto = (Productos *)malloc(sizeof(Productos));
     int opcion = 0;
     while(1)
@@ -79,29 +75,29 @@ int main()
         switch(opcion)
         {
             case 1: ;
-                char *nombreTienda;
                 printf("Ingrese el nombre de la tienda: ");
                 scanf("%s", nombreTienda);
-                if(searchMap(tiendas, nombreTienda) == NULL)
+                if(searchMap(mapaTiendas, nombreTienda) != NULL)
                 {
-                    insertMap(tiendas, nombreTienda, NULL);
-                    printf("Tienda agregada con exito\n");
-                }
-                else
                     printf("La tienda ya existe\n");
+                    break;
+                }
+                Map *mapaProductos = createMap(is_equal_string);
+                insertMap(mapaTiendas, nombreTienda, mapaProductos);
+                printf("Tienda agregada con exito\n");
                 break;
             case 2:
-                nuevoProducto = agregarProducto(tiendas);
-                if(nuevoProducto != NULL)
+                nuevoProducto = agregarProducto(mapaTiendas);
+                printf("A que tienda pertenece el producto?: ");
+                scanf("%s", nombreTienda);
+                if(searchMap(mapaTiendas, nombreTienda) == NULL)
                 {
-                    char *tienda;
-                    printf("Ingrese el nombre de la tienda: ");
-                    scanf("%s", tienda);
-                    insertMap(tiendas, tienda, nuevoProducto);
-                    printf("Producto agregado con exito\n");
+                    printf("La tienda no existe\n");
+                    break;
                 }
-                else
-                    printf("No se pudo agregar el producto\n");
+                
+                insertMap(mapaProductos, nuevoProducto->nombre, nuevoProducto);
+                insertMap(mapaTiendas, nombreTienda, mapaProductos);
                 break;
             case 3:
                 break;
