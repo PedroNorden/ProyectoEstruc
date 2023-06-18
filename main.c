@@ -28,14 +28,6 @@ Productos *agregarProducto(Map *tiendas)
     char categoria[20];
     float popularidad;
     Productos *producto = (Productos *)malloc(sizeof(Productos));
-    printf("Ingrese el nombre de la tienda: ");
-    char *tienda;
-    scanf("%s", tienda);
-    if(searchMap(tiendas, tienda) == NULL)
-    {
-        printf("La tienda no existe\n");
-        return NULL;
-    }
     printf("Ingrese el nombre del producto: ");
     scanf("%s", nombre);
     strcpy(producto->nombre, nombre);
@@ -54,22 +46,122 @@ Productos *agregarProducto(Map *tiendas)
     return producto;
 }
 
+void buscarProducto(Map *tiendas, char *nombreProducto)
+{
+    char *nombreTienda = (char *)malloc(sizeof(char)*50);
+    printf("Ingrese el nombre de la tienda. Si no sabe la tienda, ingrese un 0: ");
+    scanf("%s", nombreTienda);
+    if(strcmp(nombreTienda, "0") == 0)
+    {
+        Map *mapaProductos = firstMap(tiendas);
+        while(mapaProductos != NULL)
+        {
+            Productos *producto = firstMap(mapaProductos);
+            while(producto != NULL)
+            {
+                if(strcmp(producto->nombre, nombreProducto) == 0)
+                {
+                    printf("Producto encontrado\n");
+                    printf("Nombre: %s\n", producto->nombre);
+                    printf("Precio: %d\n", producto->precio);
+                    printf("Categoria: %s\n", producto->categoria);
+                    printf("Popularidad: %f\n", producto->popularidad);
+                    return;
+                }
+                producto = nextMap(mapaProductos);
+            }
+            mapaProductos = nextMap(tiendas);
+        }
+    }
+    else
+    {
+        Map *mapaProductos = searchMap(tiendas, nombreTienda);
+        if(mapaProductos == NULL)
+        {
+            printf("La tienda no existe\n");
+            return;
+        }
+        Productos *producto = firstMap(mapaProductos);
+        while(producto != NULL)
+        {
+            if(strcmp(producto->nombre, nombreProducto) == 0)
+            {
+                printf("Producto encontrado\n");
+                printf("Nombre: %s\n", producto->nombre);
+                printf("Precio: %d\n", producto->precio);
+                printf("Categoria: %s\n", producto->categoria);
+                printf("Popularidad: %f\n", producto->popularidad);
+                return;
+            }
+            producto = nextMap(mapaProductos);
+        }
+    }
+}
+
+void eliminarProducto(Map *tiendas, char *nombreProducto)
+{
+    char *nombreTienda = (char *)malloc(sizeof(char)*50);
+    printf("Ingrese el nombre de la tienda. Si no sabe la tienda, ingrese un 0: ");
+    scanf("%s", nombreTienda);
+    if(strcmp(nombreTienda, "0") == 0)
+    {
+        Map *mapaProductos = firstMap(tiendas);
+        while(mapaProductos != NULL)
+        {
+            Productos *producto = firstMap(mapaProductos);
+            while(producto != NULL)
+            {
+                if(strcmp(producto->nombre, nombreProducto) == 0)
+                {
+                    eraseMap(mapaProductos, producto->nombre);
+                    printf("Producto eliminado\n");
+                    return;
+                }
+                producto = nextMap(mapaProductos);
+            }
+            mapaProductos = nextMap(tiendas);
+        }
+    }
+    else
+    {
+        Map *mapaProductos = searchMap(tiendas, nombreTienda);
+        if(mapaProductos == NULL)
+        {
+            printf("La tienda no existe\n");
+            return;
+        }
+        Productos *producto = firstMap(mapaProductos);
+        while(producto != NULL)
+        {
+            if(strcmp(producto->nombre, nombreProducto) == 0)
+            {
+                eraseMap(mapaProductos, producto->nombre);
+                printf("Producto eliminado\n");
+                return;
+            }
+            producto = nextMap(mapaProductos);
+        }
+    }
+                    
+}
 
 int main()
 {
     Map *mapaTiendas = createMap(is_equal_string);
     char *nombreTienda = (char *)malloc(sizeof(char)*50);
     Productos *nuevoProducto = (Productos *)malloc(sizeof(Productos));
+    char nombreProducto[50];
     int opcion = 0;
     while(1)
     {
         printf("1. Agregar tienda\n");
         printf("2. Agregar producto\n");
         printf("3. Buscar producto\n");
-        printf("4. Ordenar productos\n");
-        printf("5. Guardar productos en lista de deseados\n");
-        printf("6. Mostrar lista de deseados\n");
-        printf("7. Leer datos de pagina\n");
+        printf("4. Eliminar producto\n");
+        printf("5. Ordenar productos\n");
+        printf("6. Guardar productos en lista de deseados\n");
+        printf("7. Mostrar lista de deseados\n");
+        printf("8. Leer datos de pagina\n");
         printf("0. Salir\n");
         scanf("%d", &opcion);
         switch(opcion)
@@ -99,9 +191,15 @@ int main()
                 insertMap(mapaProductos, nuevoProducto->nombre, nuevoProducto);
                 insertMap(mapaTiendas, nombreTienda, mapaProductos);
                 break;
-            case 3:
+            case 3: ;
+                printf("Ingrese el nombre del producto: ");
+                scanf("%s", nombreProducto);
+                buscarProducto(mapaTiendas, nombreProducto);
                 break;
-            case 4:
+            case 4: ;
+                printf("Ingrese el nombre del producto: ");
+                scanf("%s", nombreProducto);
+                eliminarProducto(mapaTiendas, nombreProducto);
                 break;
             case 5:
                 break;
