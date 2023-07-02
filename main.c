@@ -142,15 +142,15 @@ void ordenarProductos(Map *mapaTiendas, char *nombreTienda)
     Map *mapaProductos = searchMap(mapaTiendas, nombreTienda);
     Heap *productosOrdenados = createHeap();
     Productos *producto = firstMap(mapaProductos);
-    List *listaProductos = createList();
+    List *listaProductos = createList(); // Sirve para ordenar por precio de menor a mayor
     int cantidadProductos = 0;
-    printf("Desea ordenar por precio o por popularidad? (1 = precio, 2 = popularidad): ");
+    printf("Desea ordenar por precio o por popularidad? (1 = popularidad, 2 = precio): ");
     scanf("%d", &opcion);
     if(opcion == 1)
     {
         while(producto != NULL)
         {
-            heap_push(productosOrdenados, producto, producto->precio);
+            heap_push(productosOrdenados, producto, producto->popularidad);
             cantidadProductos++;
             producto = nextMap(mapaProductos);
         }
@@ -169,14 +169,14 @@ void ordenarProductos(Map *mapaTiendas, char *nombreTienda)
     {
         while(producto != NULL)
         {
-            heap_push(productosOrdenados, producto, producto->popularidad);
+            heap_push(productosOrdenados, producto, producto->precio);
             cantidadProductos++;
             producto = nextMap(mapaProductos);
         }
         for(int i = 0; i < cantidadProductos; i++)
         {
             producto = (Productos *)heap_top(productosOrdenados);
-            pushBack(listaProductos, producto);
+            pushFront(listaProductos, producto); // Con el pushFront se ordena de menor a mayor
             heap_pop(productosOrdenados);
         }
         producto = firstList(listaProductos);
